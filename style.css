@@ -1,0 +1,277 @@
+/* Global reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: #050505;
+  color: #f5f5f5;
+}
+
+/* Top bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #0b0b0b;
+  border-bottom: 1px solid #222;
+}
+
+.logo {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #e0e0e0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  background: #151515;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.nav-btn:hover {
+  background: #1f1f1f;
+  border-color: #444;
+}
+
+/* Main view */
+#main-view {
+  padding: 16px;
+}
+
+/* Simple cards for games */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.game-card {
+  background: #101010;
+  border: 1px solid #222;
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.game-title {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.game-meta {
+  font-size: 11px;
+  color: #aaa;
+}
+
+/* Admin panel basic */
+.admin-panel {
+  max-width: 480px;
+  background: #101010;
+  border: 1px solid #222;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.admin-panel h2 {
+  margin-bottom: 8px;
+}
+
+.admin-field {
+  margin-bottom: 10px;
+}
+
+.admin-field label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.admin-field input,
+.admin-field textarea {
+  width: 100%;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: #050505;
+  color: #f5f5f5;
+  font-size: 13px;
+}
+
+.admin-panel button {
+  background: #151515;
+  color: #f5f5f5;
+  border: 1px solid #333;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.admin-panel button:hover {
+  background: #1f1f1f;
+}
+
+/* Lockdown overlay (Dark Hacker Theme, full hard lock) */
+#lockdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #330000 0, #050000 40%, #000000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.lockdown-hidden {
+  display: none;
+}
+
+.lockdown-content {
+  text-align: center;
+  padding: 24px 32px;
+  border-radius: 8px;
+  border: 2px solid #ff0000;
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.lockdown-content h1 {
+  font-size: 28px;
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+  margin-bottom: 10px;
+  letter-spacing: 0.15em;
+}
+
+#lockdown-message {
+  font-size: 14px;
+  color: #ffbbbb;
+  margin-bottom: 12px;
+}
+
+.lockdown-timer-label {
+  font-size: 12px;
+  color: #ff8888;
+  margin-bottom: 4px;
+}
+
+#lockdown-timer {
+  font-size: 24px;
+  color: #ff5555;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+/* Admin button on overlay */
+.lockdown-admin-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #330000;
+  color: #ff7777;
+  border: 1px solid #ff0000;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+}
+
+.lockdown-admin-button:hover {
+  background: #550000;
+}
+
+/* Admin popup */
+#lockdown-admin-popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.lockdown-popup-hidden {
+  display: none;
+}
+
+.lockdown-popup {
+  background: #050505;
+  border-radius: 6px;
+  border: 1px solid #ff0000;
+  padding: 16px 18px;
+  width: 260px;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+}
+
+.lockdown-popup h2 {
+  font-size: 16px;
+  color: #ff6666;
+  margin-bottom: 8px;
+}
+
+.lockdown-popup p {
+  font-size: 12px;
+  color: #ffbbbb;
+  margin-bottom: 8px;
+}
+
+.lockdown-popup input {
+  width: 100%;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: #000;
+  color: #f5f5f5;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.lockdown-popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.lockdown-popup-buttons button {
+  background: #151515;
+  color: #f5f5f5;
+  border: 1px solid #333;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.lockdown-popup-buttons button:hover {
+  background: #1f1f1f;
+}
+
+.lockdown-error {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #ff6666;
+}
