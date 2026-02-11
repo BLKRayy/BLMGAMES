@@ -1,8 +1,8 @@
 const ADMIN_PASSWORD = "loyal";
 
-// ===== URL & LOCKDOWN MODULE =====
-const URLModule = (() => {
-  function getParams() {
+// ===== UTIL =====
+const Util = {
+  getParams() {
     const params = {};
     const search = window.location.search.substring(1);
     if (!search) return params;
@@ -12,28 +12,33 @@ const URLModule = (() => {
       params[decodeURIComponent(key)] = decodeURIComponent(value || "");
     }
     return params;
-  }
-
-  function clearLockdownParams() {
+  },
+  clearLockdownParams() {
     const url = new URL(window.location.href);
     url.searchParams.delete("lockdown");
     url.searchParams.delete("end");
     url.searchParams.delete("msg");
     window.history.replaceState({}, "", url.toString());
-  }
-
-  function setLockdownParams(message, endTimestamp) {
+  },
+  setLockdownParams(message, endTimestamp) {
     const url = new URL(window.location.href);
     url.searchParams.set("lockdown", "1");
     url.searchParams.set("end", String(endTimestamp));
     url.searchParams.set("msg", encodeURIComponent(message));
     window.location.href = url.toString();
+  },
+  formatTime(ms) {
+    if (ms <= 0) return "00:00:00";
+    const totalSeconds = Math.floor(ms / 1000);
+    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+    const s = String(totalSeconds % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
   }
+};
 
-  return { getParams, clearLockdownParams, setLockdownParams };
-})();
-
-const LockdownModule = (() => {
+// ===== LOCKDOWN =====
+const Lockdown = (() => {
   const overlay = document.getElementById("lockdown-overlay");
   const msgEl = document.getElementById("lockdown-message");
   const timerEl = document.getElementById("lockdown-timer");
@@ -46,38 +51,28 @@ const LockdownModule = (() => {
 
   let interval = null;
 
-  function format(ms) {
-    if (ms <= 0) return "00:00:00";
-    const totalSeconds = Math.floor(ms / 1000);
-    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-    const s = String(totalSeconds % 60).padStart(2, "0");
-    return `${h}:${m}:${s}`;
-  }
-
-  function startCountdown(end) {
-    function tick() {
-      const now = Date.now();
-      const remaining = end - now;
-      if (remaining <= 0) {
-        timerEl.textContent = "00:00:00";
-        URLModule.clearLockdownParams();
-        hide();
-        return;
-      }
-      timerEl.textContent = format(remaining);
-    }
-    tick();
-    interval = setInterval(tick, 1000);
-  }
-
   function show(message, end) {
     msgEl.textContent = message || "This site is currently locked.";
     overlay.classList.remove("lockdown-hidden");
     document.body.style.overflow = "hidden";
     if (interval) clearInterval(interval);
-    if (end) startCountdown(end);
-    else timerEl.textContent = "--:--:--";
+    if (end) {
+      const tick = () => {
+        const now = Date.now();
+        const remaining = end - now;
+        if (remaining <= 0) {
+          timerEl.textContent = "00:00:00";
+          Util.clearLockdownParams();
+          hide();
+          return;
+        }
+        timerEl.textContent = Util.formatTime(remaining);
+      };
+      tick();
+      interval = setInterval(tick, 1000);
+    } else {
+      timerEl.textContent = "--:--:--";
+    }
   }
 
   function hide() {
@@ -101,7 +96,7 @@ const LockdownModule = (() => {
   submitBtn.addEventListener("click", () => {
     const val = passInput.value.trim();
     if (val === ADMIN_PASSWORD) {
-      URLModule.clearLockdownParams();
+      Util.clearLockdownParams();
       hide();
       popup.classList.add("lockdown-popup-hidden");
     } else {
@@ -114,7 +109,7 @@ const LockdownModule = (() => {
   });
 
   function initFromURL() {
-    const params = URLModule.getParams();
+    const params = Util.getParams();
     if (params.lockdown === "1") {
       const msg = params.msg ? decodeURIComponent(params.msg) : "This site is currently locked.";
       const end = params.end ? parseInt(params.end, 10) : null;
@@ -127,22 +122,34 @@ const LockdownModule = (() => {
   return { initFromURL, show, hide };
 })();
 
-// ===== SPA MODULE =====
-const SPAModule = (() => {
+// ===== APP =====
+const App = (() => {
   const mainView = document.getElementById("main-view");
   const navButtons = document.querySelectorAll(".nav-btn");
   let games = [];
 
+  function setActiveNav(view) {
+    navButtons.forEach((btn) => {
+      const v = btn.getAttribute("data-view");
+      btn.style.borderColor = v === view ? "#ff0000" : "#333";
+    });
+  }
+
   function renderHome() {
+    setActiveNav("home");
     mainView.innerHTML = `
       <section>
         <h2>Home</h2>
         <p>Welcome to BLK Launcher.</p>
+        <p style="font-size:12px;color:#aaa;margin-top:6px;">
+          Use the Admin tab to activate global lockdown with a custom message and timer.
+        </p>
       </section>
     `;
   }
 
   function renderGames() {
+    setActiveNav("games");
     const cards = games
       .map(
         (g) => `
@@ -163,6 +170,7 @@ const SPAModule = (() => {
   }
 
   function renderFavorites() {
+    setActiveNav("favorites");
     mainView.innerHTML = `
       <section>
         <h2>Favorites</h2>
@@ -172,6 +180,7 @@ const SPAModule = (() => {
   }
 
   function renderAdmin() {
+    setActiveNav("admin");
     mainView.innerHTML = `
       <section>
         <h2>Admin Panel</h2>
@@ -188,7 +197,7 @@ const SPAModule = (() => {
           <button id="admin-activate-lockdown">Activate Lockdown</button>
           <p style="margin-top:8px;font-size:11px;color:#aaa;">
             This will reload with ?lockdown=1&end=TIMESTAMP&msg=...  
-            Everyone using that URL will see lockdown.
+            Everyone using that URL will see the hacker-style lockdown screen.
           </p>
         </div>
       </section>
@@ -202,7 +211,7 @@ const SPAModule = (() => {
       const msg = msgInput.value.trim() || "This site is currently locked.";
       const mins = parseInt(minsInput.value, 10) || 60;
       const endTimestamp = Date.now() + mins * 60 * 1000;
-      URLModule.setLockdownParams(msg, endTimestamp);
+      Util.setLockdownParams(msg, endTimestamp);
     });
   }
 
@@ -222,15 +231,13 @@ const SPAModule = (() => {
     });
   }
 
-  function loadGames() {
-    return fetch("games.json")
-      .then((res) => res.json())
-      .then((data) => {
-        games = data;
-      })
-      .catch(() => {
-        games = [];
-      });
+  async function loadGames() {
+    try {
+      const res = await fetch("games.json");
+      games = await res.json();
+    } catch {
+      games = [];
+    }
   }
 
   async function init() {
@@ -243,5 +250,5 @@ const SPAModule = (() => {
 })();
 
 // ===== INIT =====
-LockdownModule.initFromURL();
-SPAModule.init();
+Lockdown.initFromURL();
+App.init();
