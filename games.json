@@ -1,0 +1,16 @@
+[
+  {
+    "id": "game1",
+    "title": "Cube Runner",
+    "category": "Arcade",
+    "description": "Dodge obstacles and survive as long as possible.",
+    "url": "https://example.com/cuberunner"
+  },
+  {
+    "id": "game2",
+    "title": "Space Blaster",
+    "category": "Shooter",
+    "description": "Blast enemies in deep space.",
+    "url": "https://example.com/spaceblaster"
+  }
+]
