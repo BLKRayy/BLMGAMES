@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BLK Launcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Lockdown Overlay -->
+  <div id="lockdown-overlay" class="lockdown-hidden">
+    <div class="lockdown-admin-button" id="lockdown-admin-button">ADMIN</div>
+    <div class="lockdown-content">
+      <h1>LOCKDOWN ACTIVE</h1>
+      <p id="lockdown-message">This site is currently locked.</p>
+      <div class="lockdown-timer-label">Time Remaining:</div>
+      <div id="lockdown-timer">--:--:--</div>
+    </div>
+
+    <!-- Admin Login Popup -->
+    <div id="lockdown-admin-popup" class="lockdown-popup-hidden">
+      <div class="lockdown-popup">
+        <h2>Admin Login</h2>
+        <p>Enter admin password to disable lockdown.</p>
+        <input type="password" id="lockdown-admin-password" placeholder="Password" />
+        <div class="lockdown-popup-buttons">
+          <button id="lockdown-admin-cancel">Cancel</button>
+          <button id="lockdown-admin-submit">Unlock</button>
+        </div>
+        <div id="lockdown-admin-error" class="lockdown-error"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app-root">
+    <header class="top-bar">
+      <div class="logo">BLK Launcher</div>
+      <nav class="nav-links">
+        <button class="nav-btn" data-view="home">Home</button>
+        <button class="nav-btn" data-view="games">Games</button>
+        <button class="nav-btn" data-view="favorites">Favorites</button>
+        <button class="nav-btn" data-view="admin">Admin</button>
+      </nav>
+    </header>
+
+    <main id="main-view">
+      <!-- Views will be rendered here -->
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
